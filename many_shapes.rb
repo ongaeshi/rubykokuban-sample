@@ -1,11 +1,24 @@
+ADD_SPEED     = 5
+CIRCLE_RADIUS = 50
+Y_OFFSET      = 80
+
 def setup
-  set_window_size(580, 600)
+  set_window_size(800, 600)
   @shapes = []
 end
 
 def update
-  if Input.mouse_press?(0)
-    @shapes << Circle.new(Pos.new(200, 200), Color.new(87, 25, 122))
+  if Input.mouse_down?(0)
+    (1..ADD_SPEED).each do
+      offset = Y_OFFSET + CIRCLE_RADIUS
+      @shapes << Circle.new(Pos.new(rand(window_width), rand(window_height - offset) + offset), Color.rand)
+    end
+  end
+
+  if Input.mouse_down?(2)
+    (1..ADD_SPEED).each do
+      @shapes.pop
+    end
   end
   
   @shapes.each do |s|
@@ -33,6 +46,9 @@ class Pos < Struct.new(:x, :y)
 end
 
 class Color < Struct.new(:r, :g, :b)
+  def self.rand
+    Color.new(Kernel.rand(255), Kernel.rand(255), Kernel.rand(255))
+  end
 end
 
 class Circle
@@ -47,6 +63,6 @@ class Circle
   def draw
     set_fill
     set_color(@color.r, @color.g, @color.b)
-    circle(@pos.x, @pos.y, 50)
+    circle(@pos.x, @pos.y, CIRCLE_RADIUS)
   end
 end
