@@ -262,7 +262,7 @@ class Enemy
     @pos     = pos.clone
     @speed   = speed.clone
     @is_dead = false
-    @life    = 3
+    @life    = 1
   end
 
   def update
@@ -330,7 +330,7 @@ class Parameters
 
   def initialize
     # basic
-    @debug_console  = true                     # Display console window?
+    @debug_console  = false                     # Display console window?
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
@@ -388,7 +388,6 @@ class Parameters
 
   def enemy_base_speed(level)
     current = level_parameter(level)
-    # Console.p current
     rand(current[:base_speed_max] - current[:base_speed_min]) + current[:base_speed_min]
   end
 
