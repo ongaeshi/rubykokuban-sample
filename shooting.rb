@@ -17,38 +17,58 @@ def draw
   
   set_color(0, 0, 0)
   text(DebugInfo.fps, 10, 15)
-  text(DebugInfo.window, 10, 30)
-  text(DebugInfo.mouse, 10, 45)
+  # text(DebugInfo.window, 10, 30)
+  # text(DebugInfo.mouse, 10, 45)
 end
 
 # ----------------------------------------------------------
 class GameMaster
+  attr_reader :enemys
+  
   def initialize
     @fighter = Fighter.new(self, Pos.new(320, 240))
     @bullets = Bullets.new
-    @enemys  = Enemys.new
+    @enemys  = Enemys.new(self)
+    @score   = 0
   end
 
   def update
-    @fighter.update
-    @bullets.update
-    @enemys.update
+    if !@fighter.is_dead
+      @fighter.update
+      @bullets.update
+      @enemys.update
 
-    @enemys.check_dead(@bullets)
+      @enemys.check_dead(@bullets)
+      @fighter.check_dead
+    end
   end
 
   def draw
     @bullets.draw
     @fighter.draw
     @enemys.draw
+
+    set_color(0, 0, 0)
+    text("Score: #{@score}", 10, 30)
+
+    if @fighter.is_dead
+      set_color(0, 0, 0)
+      text("GameOver", 280, 240)
+    end
   end
 
   def add_bullet(pos)
     @bullets.add(pos)
   end
+
+  def inc_score(value)
+    @score += value
+  end
 end
 
 class Fighter
+  attr_reader :is_dead
+
   def initialize(game_master, pos)
     @game_master = game_master
     @pos = pos
@@ -64,6 +84,15 @@ class Fighter
     if Input.mouse_press?(0)
       @game_master.add_bullet(@pos)
       # Console.p @pos
+    end
+  end
+
+  def check_dead
+    @game_master.enemys.array.each do |enemy|
+      if @pos.length_square(enemy.pos) < 20**2
+        @is_dead = true
+        break
+      end
     end
   end
 
@@ -135,7 +164,10 @@ class Bullet
 end
 
 class Enemys
-  def initialize
+  attr_reader :array
+
+  def initialize(game_master)
+    @game_master = game_master
     @array = []
     @interval = Param.enemy_add_interval
   end
@@ -156,7 +188,7 @@ class Enemys
   def check_dead(bullets)
     @array.each do |enemy|
       bullets.array.each do |bullet|
-        break if enemy.check_dead(bullet)
+        break if enemy.check_dead(@game_master, bullet)
       end
     end
 
@@ -178,6 +210,8 @@ class Enemys
 end
 
 class Enemy
+  attr_reader :pos
+
   def initialize(pos, speed)
     @pos     = pos.clone
     @speed   = speed
@@ -189,10 +223,13 @@ class Enemy
     @pos.y += @speed
   end
 
-  def check_dead(bullet)
-    if bullet.pos.length_squasre(@pos) < 30**2
+  def check_dead(game_master, bullet)
+    if bullet.pos.length_square(@pos) < 30**2
       @life -= 1
-      @is_dead = true if @life == 0
+      if @life == 0
+        @is_dead = true
+        game_master.inc_score(1)
+      end
       bullet.set_hit
       true
     else
@@ -203,7 +240,7 @@ class Enemy
   def draw
     set_fill
     set_color(196, 0, 230)
-    rect(@pos.x, @pos.y, 30, 30)
+    rect(@pos.x - 15, @pos.y - 15, 30, 30)
   end
 
   def dead?
@@ -223,7 +260,7 @@ class Pos < Struct.new(:x, :y)
     self.y = y_max if self.y > y_max
   end
 
-  def length_squasre(rhs)
+  def length_square(rhs)
     (x - rhs.x)**2 + (y - rhs.y)**2
   end
 end
