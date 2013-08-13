@@ -200,9 +200,10 @@ class Enemys
   end
 
   def add_enemy
-    init_pos = Param.enemy_add_pos
-    speed    = rand(10 - 1) + 1
-    @array << Enemy.new(init_pos, speed)
+    init_pos    = Param.enemy_add_pos
+    init_speed  = Pos.new(0, rand(10 - 1) + 1)
+    # Console.p [init_pos, init_speed]
+    @array << Enemy.new(init_pos, init_speed)
   end
 end
 
@@ -211,13 +212,13 @@ class Enemy
 
   def initialize(pos, speed)
     @pos     = pos.clone
-    @speed   = speed
+    @speed   = speed.clone
     @is_dead = false
     @life    = 3
   end
 
   def update
-    @pos.y += @speed
+    @pos += @speed
   end
 
   def check_dead(game_master, bullet)
@@ -260,6 +261,10 @@ class Pos < Struct.new(:x, :y)
   def length_square(rhs)
     (x - rhs.x)**2 + (y - rhs.y)**2
   end
+
+  def +(pos)
+    Pos.new(x + pos.x, y + pos.y)
+  end
 end
 
 class Parameters
@@ -276,7 +281,7 @@ class Parameters
 
   def initialize
     # basic
-    @debug_console  = false                     # Display console window?
+    @debug_console  = true                     # Display console window?
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
