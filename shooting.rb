@@ -185,7 +185,7 @@ class Enemys
     # Add random
     if @interval == 0
       dir = rand(4)
-      0.step(rand(Param.enemy_add_max)) { add_enemy(dir) }
+      0.step(Param.enemy_add_num(@game_master.level)) { add_enemy(dir) }
       @interval = Param.enemy_add_interval
       is_spawn = true
     end
@@ -321,21 +321,21 @@ class Parameters
     @bullet_lifetime = 120
 
     # enemy
-    @enemy_add_max      = 5
     @enemy_add_interval = 180
 
+    # level parameter
     @level_parameters =
       [
-       {base_speed_min: 1,  base_speed_max: 3},  # level1
-       {base_speed_min: 2,  base_speed_max: 6},  # level2
-       {base_speed_min: 3,  base_speed_max: 9},  # level3
-       {base_speed_min: 4,  base_speed_max: 12}, # level4
-       {base_speed_min: 5,  base_speed_max: 15}, # level5
-       {base_speed_min: 6,  base_speed_max: 18}, # level6
-       {base_speed_min: 7,  base_speed_max: 21}, # level7
-       {base_speed_min: 8,  base_speed_max: 24}, # level8
-       {base_speed_min: 9,  base_speed_max: 27}, # level9
-       {base_speed_min: 10, base_speed_max: 30}, # level10
+       {base_speed_min: 1,  base_speed_max:  3, add_min: 1, add_max: 3},  # level1
+       {base_speed_min: 2,  base_speed_max:  6, add_min: 1, add_max: 3},  # level2
+       {base_speed_min: 3,  base_speed_max:  9, add_min: 1, add_max: 5},  # level3
+       {base_speed_min: 4,  base_speed_max: 12, add_min: 1, add_max: 5},  # level4
+       {base_speed_min: 5,  base_speed_max: 15, add_min: 1, add_max: 6},  # level5
+       {base_speed_min: 6,  base_speed_max: 18, add_min: 1, add_max: 6},  # level6
+       {base_speed_min: 7,  base_speed_max: 21, add_min: 2, add_max: 7},  # level7
+       {base_speed_min: 8,  base_speed_max: 24, add_min: 2, add_max: 7},  # level8
+       {base_speed_min: 9,  base_speed_max: 27, add_min: 3, add_max: 8},  # level9
+       {base_speed_min: 10, base_speed_max: 30, add_min: 3, add_max: 9},  # level10
       ]
   end
 
@@ -359,15 +359,23 @@ class Parameters
     game_height + console_height
   end
 
-  def enemy_base_speed(level)
+  def level_parameter(level)
     if level < @level_parameters.size
       current = @level_parameters[level]
     else
       current = @level_parameters[-1]
     end
+  end
 
+  def enemy_base_speed(level)
+    current = level_parameter(level)
     # Console.p current
     rand(current[:base_speed_max] - current[:base_speed_min]) + current[:base_speed_min]
+  end
+
+  def enemy_add_num(level)
+    current = level_parameter(level)
+    rand(current[:add_max] - current[:add_min]) + current[:add_min]
   end
 end
 
