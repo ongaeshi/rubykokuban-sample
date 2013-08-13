@@ -22,19 +22,6 @@ def draw
 end
 
 # ----------------------------------------------------------
-class Pos < Struct.new(:x, :y)
-  def clone
-    Pos.new(self.x, self.y)
-  end
-  
-  def limit(x_min, y_min, x_max, y_max)
-    self.x = x_min if self.x < x_min
-    self.x = x_max if self.x > x_max
-    self.y = y_min if self.y < y_min
-    self.y = y_max if self.y > y_max
-  end
-end
-
 class GameMaster
   def initialize
     @fighter = Fighter.new(self, Pos.new(320, 240))
@@ -46,6 +33,8 @@ class GameMaster
     @fighter.update
     @bullets.update
     @enemys.update
+
+    @enemys.check_dead(@bullets)
   end
 
   def draw
@@ -94,6 +83,8 @@ class Fighter
 end
 
 class Bullets
+  attr_reader :array
+
   def initialize
     @array = []
   end
@@ -115,9 +106,12 @@ class Bullets
 end
 
 class Bullet
+  attr_reader :pos
+  
   def initialize(pos)
     @pos = pos.clone
     @lifetime = Param.bullet_lifetime
+    @is_hit = false
   end
 
   def update
@@ -132,7 +126,11 @@ class Bullet
   end
 
   def dead?
-    @lifetime == 0
+    @lifetime == 0 || @is_hit
+  end
+
+  def set_hit
+    @is_hit = true
   end
 end
 
@@ -153,6 +151,14 @@ class Enemys
 
     # Update
     @array.each {|v| v.update }
+  end
+
+  def check_dead(bullets)
+    @array.each do |enemy|
+      bullets.array.each do |bullet|
+        break if enemy.check_dead(bullet)
+      end
+    end
 
     # Check dead
     @array = @array.find_all {|v| !v.dead? }
@@ -173,12 +179,25 @@ end
 
 class Enemy
   def initialize(pos, speed)
-    @pos = pos.clone
-    @speed = speed
+    @pos     = pos.clone
+    @speed   = speed
+    @is_dead = false
+    @life    = 3
   end
 
   def update
     @pos.y += @speed
+  end
+
+  def check_dead(bullet)
+    if bullet.pos.length_squasre(@pos) < 30**2
+      @life -= 1
+      @is_dead = true if @life == 0
+      bullet.set_hit
+      true
+    else
+      false
+    end
   end
 
   def draw
@@ -188,7 +207,24 @@ class Enemy
   end
 
   def dead?
-    false
+    @is_dead
+  end
+end
+
+class Pos < Struct.new(:x, :y)
+  def clone
+    Pos.new(self.x, self.y)
+  end
+  
+  def limit(x_min, y_min, x_max, y_max)
+    self.x = x_min if self.x < x_min
+    self.x = x_max if self.x > x_max
+    self.y = y_min if self.y < y_min
+    self.y = y_max if self.y > y_max
+  end
+
+  def length_squasre(rhs)
+    (x - rhs.x)**2 + (y - rhs.y)**2
   end
 end
 
