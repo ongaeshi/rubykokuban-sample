@@ -1,5 +1,3 @@
-$debug_console = true
-
 def setup
   Param = Parameters.new(true) # Remove console if Parameters.new(false)
 
@@ -46,8 +44,15 @@ class Fighter
 
   def draw
     set_fill
+
+    set_color(220, 73, 0)
+    triangle(@pos.x - 7, @pos.y, @pos.x + 7, @pos.y, @pos.x, @pos.y - 30)
+
     set_color(87, 25, 122)
-    circle(@pos.x, @pos.y, 30)
+    triangle(@pos.x - 14, @pos.y + 7, @pos.x - 2, @pos.y + 7, @pos.x - 7, @pos.y - 7)
+
+    set_color(87, 25, 122)
+    triangle(@pos.x + 14, @pos.y + 7, @pos.x + 2, @pos.y + 7, @pos.x + 7, @pos.y - 7)
   end
 end
 
