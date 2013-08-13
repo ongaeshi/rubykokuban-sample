@@ -117,7 +117,7 @@ end
 class Bullet
   def initialize(pos)
     @pos = pos.clone
-    @lifetime = 120
+    @lifetime = Param.bullet_lifetime
   end
 
   def update
@@ -139,12 +139,17 @@ end
 class Enemys
   def initialize
     @array = []
-    @array << Enemy.new(Pos.new(10, 20))
-    @array << Enemy.new(Pos.new(40, 20))
+    @interval = Param.enemy_add_interval
   end
 
   def update
+    @interval -= 1
+
     # Add random
+    if @interval == 0
+      0.step(rand(Param.enemy_add_max)) { add_enemy }
+      @interval = Param.enemy_add_interval
+    end
 
     # Update
     @array.each {|v| v.update }
@@ -156,15 +161,24 @@ class Enemys
   def draw
     @array.each {|v| v.draw }
   end
+
+  def add_enemy
+    init_pos = Param.enemy_add_pos
+    speed    = rand(10 - 1) + 1
+
+    Console.p [init_pos, speed]
+    @array << Enemy.new(init_pos, speed)
+  end
 end
 
 class Enemy
-  def initialize(pos)
+  def initialize(pos, speed)
     @pos = pos.clone
+    @speed = speed
   end
 
   def update
-    @pos.y += 3
+    @pos.y += @speed
   end
 
   def draw
@@ -183,7 +197,12 @@ class Parameters
   attr_reader :game_width
   attr_reader :game_height
   attr_reader :console_height
+
   attr_reader :bullet_speed
+  attr_reader :bullet_lifetime
+  
+  attr_reader :enemy_add_max
+  attr_reader :enemy_add_interval
 
   def initialize
     # basic
@@ -193,7 +212,12 @@ class Parameters
     @console_height = @debug_console ? 200 : 0
 
     # bullet
-    @bullet_speed   = 7
+    @bullet_speed    = 7
+    @bullet_lifetime = 120
+
+    # enemy
+    @enemy_add_max      = 5
+    @enemy_add_interval = 180
   end
 
   def console_x
@@ -214,6 +238,10 @@ class Parameters
 
   def window_height
     game_height + console_height
+  end
+
+  def enemy_add_pos
+    Pos.new(rand(600 - 10) + 10, 0)
   end
 end
 
