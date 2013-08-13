@@ -29,6 +29,7 @@ class GameMaster
     @fighter = Fighter.new(self, Vec2.new(320, 240))
     @bullets = Bullets.new
     @enemys  = Enemys.new(self)
+    @turn    = 0
     @score   = 0
   end
 
@@ -36,7 +37,7 @@ class GameMaster
     if !@fighter.is_dead
       @fighter.update
       @bullets.update
-      @enemys.update
+      @turn += 1 if @enemys.update
 
       @enemys.check_dead(@bullets)
       @fighter.check_dead
@@ -49,7 +50,8 @@ class GameMaster
     @enemys.draw
 
     set_color(0, 0, 0)
-    text("Score: #{@score}", 10, 30)
+    text("Level: #{level + 1}", 10, 30)
+    text("Score: #{@score}", 10, 45)
 
     if @fighter.is_dead
       set_color(0, 0, 0)
@@ -63,6 +65,10 @@ class GameMaster
 
   def inc_score(value)
     @score += value
+  end
+
+  def level
+    (@turn / Param.levelup_interval).to_i
   end
 end
 
@@ -172,6 +178,8 @@ class Enemys
   end
 
   def update
+    is_spawn = false
+    
     @interval -= 1
 
     # Add random
@@ -179,10 +187,13 @@ class Enemys
       dir = rand(4)
       0.step(rand(Param.enemy_add_max)) { add_enemy(dir) }
       @interval = Param.enemy_add_interval
+      is_spawn = true
     end
 
     # Update
     @array.each {|v| v.update }
+
+    is_spawn
   end
 
   def check_dead(bullets)
@@ -204,16 +215,16 @@ class Enemys
     case dir
     when 0
       init_pos    = Vec2.new(rand(Param.game_width), 0)
-      init_speed  = Vec2.new(0, Param.enemy_base_speed)
+      init_speed  = Vec2.new(0, Param.enemy_base_speed(@game_master.level))
     when 1
       init_pos    = Vec2.new(Param.game_width, rand(Param.game_height))
-      init_speed  = Vec2.new(-Param.enemy_base_speed, 0)
+      init_speed  = Vec2.new(-Param.enemy_base_speed(@game_master.level), 0)
     when 2
       init_pos    = Vec2.new(rand(Param.game_width), Param.game_height)
-      init_speed  = Vec2.new(0, -Param.enemy_base_speed)
+      init_speed  = Vec2.new(0, -Param.enemy_base_speed(@game_master.level))
     when 3
       init_pos    = Vec2.new(0, rand(Param.game_height))
-      init_speed  = Vec2.new(Param.enemy_base_speed, 0)
+      init_speed  = Vec2.new(Param.enemy_base_speed(@game_master.level), 0)
     end
 
     # Console.p [init_pos, init_speed]
@@ -287,6 +298,8 @@ class Parameters
   attr_reader :game_height
   attr_reader :console_height
 
+  attr_reader :levelup_interval
+
   attr_reader :bullet_speed
   attr_reader :bullet_lifetime
   
@@ -300,6 +313,9 @@ class Parameters
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
 
+    # game_master
+    @levelup_interval = 5
+
     # bullet
     @bullet_speed    = 7
     @bullet_lifetime = 120
@@ -307,6 +323,20 @@ class Parameters
     # enemy
     @enemy_add_max      = 5
     @enemy_add_interval = 180
+
+    @level_parameters =
+      [
+       {base_speed_min: 1,  base_speed_max: 3},  # level1
+       {base_speed_min: 2,  base_speed_max: 6},  # level2
+       {base_speed_min: 3,  base_speed_max: 9},  # level3
+       {base_speed_min: 4,  base_speed_max: 12}, # level4
+       {base_speed_min: 5,  base_speed_max: 15}, # level5
+       {base_speed_min: 6,  base_speed_max: 18}, # level6
+       {base_speed_min: 7,  base_speed_max: 21}, # level7
+       {base_speed_min: 8,  base_speed_max: 24}, # level8
+       {base_speed_min: 9,  base_speed_max: 27}, # level9
+       {base_speed_min: 10, base_speed_max: 30}, # level10
+      ]
   end
 
   def console_x
@@ -329,8 +359,15 @@ class Parameters
     game_height + console_height
   end
 
-  def enemy_base_speed
-    rand(10 - 1) + 1
+  def enemy_base_speed(level)
+    if level < @level_parameters.size
+      current = @level_parameters[level]
+    else
+      current = @level_parameters[-1]
+    end
+
+    # Console.p current
+    rand(current[:base_speed_max] - current[:base_speed_min]) + current[:base_speed_min]
   end
 end
 
