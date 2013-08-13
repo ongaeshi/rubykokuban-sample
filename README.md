@@ -21,6 +21,11 @@ Draw a picture. [[src]](https://github.com/ongaeshi/rubybasic-sample/blob/master
 
 ![drawing.png](https://raw.github.com/ongaeshi/rubybasic-sample/master/images/drawing.png)
 
+## mouse_shooting.rb
+Move mouse. Shot left click. [[src]](https://github.com/ongaeshi/rubybasic-sample/blob/master/mouse_shooting.rb)
+
+![move_circles.png](https://raw.github.com/ongaeshi/rubybasic-sample/master/images/mouse_shooting.png)
+
 ## move_circles.rb
 Move circles. Speed up & down. [[src]](https://github.com/ongaeshi/rubybasic-sample/blob/master/move_circles.rb)
 
