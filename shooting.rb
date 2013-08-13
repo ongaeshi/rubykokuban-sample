@@ -83,7 +83,6 @@ class Fighter
     # shot
     if Input.mouse_press?(0)
       @game_master.add_bullet(@pos)
-      # Console.p @pos
     end
   end
 
@@ -203,8 +202,6 @@ class Enemys
   def add_enemy
     init_pos = Param.enemy_add_pos
     speed    = rand(10 - 1) + 1
-
-    Console.p [init_pos, speed]
     @array << Enemy.new(init_pos, speed)
   end
 end
@@ -279,7 +276,7 @@ class Parameters
 
   def initialize
     # basic
-    @debug_console  = true                     # Display console window?
+    @debug_console  = false                     # Display console window?
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
