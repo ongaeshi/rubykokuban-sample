@@ -23,6 +23,10 @@ end
 
 # ----------------------------------------------------------
 class Pos < Struct.new(:x, :y)
+  def clone
+    Pos.new(self.x, self.y)
+  end
+  
   def limit(x_min, y_min, x_max, y_max)
     self.x = x_min if self.x < x_min
     self.x = x_max if self.x > x_max
@@ -34,15 +38,33 @@ end
 class Fighter
   def initialize(pos)
     @pos = pos
+    @bullets = []
   end
 
   def update
+    # Bullet#update
+    @bullets.each {|v| v.update }
+
+    # Remove dead bullet (Couldn't use Array#delete_if)
+    @bullets = @bullets.find_all {|v| !v.dead? }
+
+    # move
     @pos.x += (Input.mouse_x - @pos.x) * 0.2
     @pos.y += (Input.mouse_y - @pos.y) * 0.2
     @pos.limit(0, 0, Param.game_width, Param.game_height)
+
+    # shot
+    if Input.mouse_press?(0)
+      @bullets << Bullet.new(@pos) 
+      # Console.p @pos
+    end
   end
 
   def draw
+    # Bullet#draw
+    @bullets.each {|v| v.draw }
+
+    # Fighter#draw
     set_fill
 
     set_color(220, 73, 0)
@@ -56,17 +78,44 @@ class Fighter
   end
 end
 
+class Bullet
+  def initialize(pos)
+    @pos = pos.clone
+    @lifetime = 120
+  end
+
+  def update
+    @pos.y -= Param.bullet_speed
+    @lifetime -= 1 if @lifetime > 0
+  end
+
+  def draw
+    set_fill
+    set_color(51, 106, 21)
+    circle(@pos.x, @pos.y, 5)
+  end
+
+  def dead?
+    @lifetime == 0
+  end
+end
+
 class Parameters
   attr_reader :debug_console
   attr_reader :game_width
   attr_reader :game_height
   attr_reader :console_height
+  attr_reader :bullet_speed
 
   def initialize(debug_console = false)
+    # basic
     @debug_console  = debug_console
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
+
+    # bullet
+    @bullet_speed   = 7
   end
 
   def console_x
