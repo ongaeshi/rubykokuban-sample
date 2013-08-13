@@ -5,15 +5,18 @@ def setup
   set_background(200, 200, 200)
   Console.init(Param.console_x, Param.console_y, Param.console_width, Param.console_height) if Param.debug_console
 
-  @fighter = Fighter.new(Pos.new(320, 240))
+  @bullets = Bullets.new
+  @fighter = Fighter.new(Pos.new(320, 240), @bullets)
 end
 
 def update
   @fighter.update
+  @bullets.update
 end
 
 def draw
   @fighter.draw
+  @bullets.draw
 
   set_color(0, 0, 0)
   text(DebugInfo.fps, 10, 15)
@@ -36,18 +39,12 @@ class Pos < Struct.new(:x, :y)
 end
 
 class Fighter
-  def initialize(pos)
+  def initialize(pos, bullets)
     @pos = pos
-    @bullets = []
+    @bullets = bullets
   end
 
   def update
-    # Bullet#update
-    @bullets.each {|v| v.update }
-
-    # Remove dead bullet (Couldn't use Array#delete_if)
-    @bullets = @bullets.find_all {|v| !v.dead? }
-
     # move
     @pos.x += (Input.mouse_x - @pos.x) * 0.2
     @pos.y += (Input.mouse_y - @pos.y) * 0.2
@@ -55,15 +52,12 @@ class Fighter
 
     # shot
     if Input.mouse_press?(0)
-      @bullets << Bullet.new(@pos) 
+      @bullets.add(@pos)
       # Console.p @pos
     end
   end
 
   def draw
-    # Bullet#draw
-    @bullets.each {|v| v.draw }
-
     # Fighter#draw
     set_fill
 
@@ -75,6 +69,27 @@ class Fighter
 
     set_color(87, 25, 122)
     triangle(@pos.x + 14, @pos.y + 7, @pos.x + 2, @pos.y + 7, @pos.x + 7, @pos.y - 7)
+  end
+end
+
+class Bullets
+  def initialize
+    @array = []
+  end
+  
+  def add(pos)
+    @array << Bullet.new(pos) 
+  end
+
+  def update
+    @array.each {|v| v.update }
+
+    # Remove dead bullet (Couldn't use Array#delete_if)
+    @array = @array.find_all {|v| !v.dead? }
+  end
+
+  def draw
+    @array.each {|v| v.draw }
   end
 end
 
