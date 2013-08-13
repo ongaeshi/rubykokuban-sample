@@ -29,7 +29,7 @@ class GameMaster
     @fighter  = Fighter.new(self, Vec2.new(320, 240))
     @bullets  = Bullets.new
     @enemys   = Enemys.new(self)
-    @interval = Param.enemy_add_interval
+    @interval = Param.enemy_add_interval(0)
     @turn     = 0
     @score    = 0
     @next_dir = @prev_dir = rand(4)
@@ -44,7 +44,7 @@ class GameMaster
 
       if @interval == 0
         @turn += 1
-        @interval = Param.enemy_add_interval
+        @interval = Param.enemy_add_interval(level)
         @enemys.add_group(@next_dir)
         @prev_dir = @next_dir
         @next_dir = rand(4)
@@ -212,7 +212,6 @@ class Enemys
 
   def add_group(dir)
     0.step(Param.enemy_add_num(@game_master.level)) { add_enemy(dir) }
-    @interval = Param.enemy_add_interval
     is_spawn = true
   end
 
@@ -328,7 +327,6 @@ class Parameters
   attr_reader :bullet_lifetime
   
   attr_reader :enemy_add_max
-  attr_reader :enemy_add_interval
 
   def initialize
     # basic
@@ -344,22 +342,19 @@ class Parameters
     @bullet_speed    = 7
     @bullet_lifetime = 120
 
-    # enemy
-    @enemy_add_interval = 240
-
     # level parameter
     @level_parameters =
       [
-       {base_speed_min: 1,  base_speed_max:  3, add_min: 1, add_max: 3},  # level1
-       {base_speed_min: 2,  base_speed_max:  6, add_min: 1, add_max: 3},  # level2
-       {base_speed_min: 3,  base_speed_max:  9, add_min: 1, add_max: 5},  # level3
-       {base_speed_min: 4,  base_speed_max: 12, add_min: 1, add_max: 5},  # level4
-       {base_speed_min: 5,  base_speed_max: 15, add_min: 1, add_max: 6},  # level5
-       {base_speed_min: 6,  base_speed_max: 18, add_min: 1, add_max: 6},  # level6
-       {base_speed_min: 7,  base_speed_max: 21, add_min: 2, add_max: 7},  # level7
-       {base_speed_min: 8,  base_speed_max: 24, add_min: 2, add_max: 7},  # level8
-       {base_speed_min: 9,  base_speed_max: 27, add_min: 3, add_max: 8},  # level9
-       {base_speed_min: 10, base_speed_max: 30, add_min: 3, add_max: 9},  # level10
+       {base_speed_min: 1,  base_speed_max:  3, add_min: 1, add_max: 3, add_interval: 240},  # level1
+       {base_speed_min: 2,  base_speed_max:  6, add_min: 1, add_max: 3, add_interval: 230},   # level2
+       {base_speed_min: 3,  base_speed_max:  7, add_min: 1, add_max: 5, add_interval: 220},  # level3
+       {base_speed_min: 4,  base_speed_max:  8, add_min: 1, add_max: 5, add_interval: 210},  # level4
+       {base_speed_min: 5,  base_speed_max:  9, add_min: 1, add_max: 6, add_interval:  20},  # level5
+       {base_speed_min: 6,  base_speed_max: 11, add_min: 1, add_max: 6, add_interval: 200},  # level6
+       {base_speed_min: 7,  base_speed_max: 13, add_min: 2, add_max: 7, add_interval: 190},  # level7
+       {base_speed_min: 8,  base_speed_max: 15, add_min: 2, add_max: 7, add_interval: 180},  # level8
+       {base_speed_min: 9,  base_speed_max: 17, add_min: 3, add_max: 8, add_interval: 170},  # level9
+       {base_speed_min: 10, base_speed_max: 19, add_min: 3, add_max: 9, add_interval: 160},  # level10
       ]
   end
 
@@ -400,6 +395,10 @@ class Parameters
   def enemy_add_num(level)
     current = level_parameter(level)
     rand(current[:add_max] - current[:add_min]) + current[:add_min]
+  end
+
+  def enemy_add_interval(level)
+    level_parameter(level)[:add_interval]
   end
 end
 
