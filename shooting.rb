@@ -26,20 +26,30 @@ class GameMaster
   attr_reader :enemys
   
   def initialize
-    @fighter = Fighter.new(self, Vec2.new(320, 240))
-    @bullets = Bullets.new
-    @enemys  = Enemys.new(self)
-    @turn    = 0
-    @score   = 0
+    @fighter  = Fighter.new(self, Vec2.new(320, 240))
+    @bullets  = Bullets.new
+    @enemys   = Enemys.new(self)
+    @interval = Param.enemy_add_interval
+    @turn     = 0
+    @score    = 0
   end
 
   def update
     if !@fighter.is_dead
+      @interval -= 1
+
       @fighter.update
       @bullets.update
-      @turn += 1 if @enemys.update
 
+      if @interval == 0
+        @turn += 1
+        @interval = Param.enemy_add_interval
+        @enemys.add_group
+      end
+
+      @enemys.update
       @enemys.check_dead(@bullets)
+
       @fighter.check_dead
     end
   end
@@ -177,26 +187,17 @@ class Enemys
   def initialize(game_master)
     @game_master = game_master
     @array = []
+  end
+
+  def add_group
+    dir = rand(4)
+    0.step(Param.enemy_add_num(@game_master.level)) { add_enemy(dir) }
     @interval = Param.enemy_add_interval
+    is_spawn = true
   end
 
   def update
-    is_spawn = false
-    
-    @interval -= 1
-
-    # Add random
-    if @interval == 0
-      dir = rand(4)
-      0.step(Param.enemy_add_num(@game_master.level)) { add_enemy(dir) }
-      @interval = Param.enemy_add_interval
-      is_spawn = true
-    end
-
-    # Update
     @array.each {|v| v.update }
-
-    is_spawn
   end
 
   def check_dead(bullets)
