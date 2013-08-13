@@ -56,6 +56,9 @@ class GameMaster
     if @fighter.is_dead
       set_color(0, 0, 0)
       text("GameOver", 280, 240)
+    elsif @turn % Param.levelup_interval == 0
+      set_color(0, 0, 0)
+      text("Level #{level + 1}", 280, 240)
     end
   end
 
@@ -314,7 +317,7 @@ class Parameters
     @console_height = @debug_console ? 200 : 0
 
     # game_master
-    @levelup_interval = 5
+    @levelup_interval = 7
 
     # bullet
     @bullet_speed    = 7
