@@ -26,7 +26,7 @@ class GameMaster
   attr_reader :enemys
   
   def initialize
-    @fighter = Fighter.new(self, Pos.new(320, 240))
+    @fighter = Fighter.new(self, Vec2.new(320, 240))
     @bullets = Bullets.new
     @enemys  = Enemys.new(self)
     @score   = 0
@@ -176,7 +176,8 @@ class Enemys
 
     # Add random
     if @interval == 0
-      0.step(rand(Param.enemy_add_max)) { add_enemy }
+      dir = rand(4)
+      0.step(rand(Param.enemy_add_max)) { add_enemy(dir) }
       @interval = Param.enemy_add_interval
     end
 
@@ -199,9 +200,22 @@ class Enemys
     @array.each {|v| v.draw }
   end
 
-  def add_enemy
-    init_pos    = Param.enemy_add_pos
-    init_speed  = Pos.new(0, rand(10 - 1) + 1)
+  def add_enemy(dir)
+    case dir
+    when 0
+      init_pos    = Vec2.new(rand(Param.game_width), 0)
+      init_speed  = Vec2.new(0, Param.enemy_base_speed)
+    when 1
+      init_pos    = Vec2.new(Param.game_width, rand(Param.game_height))
+      init_speed  = Vec2.new(-Param.enemy_base_speed, 0)
+    when 2
+      init_pos    = Vec2.new(rand(Param.game_width), Param.game_height)
+      init_speed  = Vec2.new(0, -Param.enemy_base_speed)
+    when 3
+      init_pos    = Vec2.new(0, rand(Param.game_height))
+      init_speed  = Vec2.new(Param.enemy_base_speed, 0)
+    end
+
     # Console.p [init_pos, init_speed]
     @array << Enemy.new(init_pos, init_speed)
   end
@@ -246,9 +260,9 @@ class Enemy
   end
 end
 
-class Pos < Struct.new(:x, :y)
+class Vec2 < Struct.new(:x, :y)
   def clone
-    Pos.new(self.x, self.y)
+    Vec2.new(self.x, self.y)
   end
   
   def limit(x_min, y_min, x_max, y_max)
@@ -263,7 +277,7 @@ class Pos < Struct.new(:x, :y)
   end
 
   def +(pos)
-    Pos.new(x + pos.x, y + pos.y)
+    Vec2.new(x + pos.x, y + pos.y)
   end
 end
 
@@ -315,8 +329,8 @@ class Parameters
     game_height + console_height
   end
 
-  def enemy_add_pos
-    Pos.new(rand(600 - 10) + 10, 0)
+  def enemy_base_speed
+    rand(10 - 1) + 1
   end
 end
 
