@@ -1,5 +1,5 @@
 def setup
-  Param = Parameters.new(true) # Remove console if Parameters.new(false)
+  Param = Parameters.new
 
   set_window_size(Param.window_width, Param.window_height)
   set_background(200, 200, 200)
@@ -122,9 +122,9 @@ class Parameters
   attr_reader :console_height
   attr_reader :bullet_speed
 
-  def initialize(debug_console = false)
+  def initialize
     # basic
-    @debug_console  = debug_console
+    @debug_console  = false                     # Display console window?
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
