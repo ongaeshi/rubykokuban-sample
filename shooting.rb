@@ -1,11 +1,11 @@
 $debug_console = true
 
 def setup
-  @debug_console = true
-  @param = Param.new
-  set_window_size(@param.window_width, @param.window_height)
+  Param = Parameters.new(true) # Remove console if Parameters.new(false)
+
+  set_window_size(Param.window_width, Param.window_height)
   set_background(200, 200, 200)
-  Console.init(@param.console_x, @param.console_y, @param.console_width, @param.console_height) if $debug_console
+  Console.init(Param.console_x, Param.console_y, Param.console_width, Param.console_height) if Param.debug_console
 
   @fighter = Fighter.new(Pos.new(320, 240))
 end
@@ -41,7 +41,7 @@ class Fighter
   def update
     @pos.x += (Input.mouse_x - @pos.x) * 0.2
     @pos.y += (Input.mouse_y - @pos.y) * 0.2
-    @pos.limit(0, 0, 640, 480)
+    @pos.limit(0, 0, Param.game_width, Param.game_height)
   end
 
   def draw
@@ -51,15 +51,17 @@ class Fighter
   end
 end
 
-class Param
+class Parameters
+  attr_reader :debug_console
   attr_reader :game_width
   attr_reader :game_height
   attr_reader :console_height
 
-  def initialize
+  def initialize(debug_console = false)
+    @debug_console  = debug_console
     @game_width     = 640
     @game_height    = 480
-    @console_height = $debug_console ? 200 : 0
+    @console_height = @debug_console ? 200 : 0
   end
 
   def console_x
