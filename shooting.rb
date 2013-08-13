@@ -32,6 +32,7 @@ class GameMaster
     @interval = Param.enemy_add_interval
     @turn     = 0
     @score    = 0
+    @next_dir = rand(4)
   end
 
   def update
@@ -44,7 +45,9 @@ class GameMaster
       if @interval == 0
         @turn += 1
         @interval = Param.enemy_add_interval
-        @enemys.add_group
+        @enemys.add_group(@next_dir)
+        @next_dir = rand(4)
+        # Console.p @next_dir
       end
 
       @enemys.update
@@ -55,6 +58,8 @@ class GameMaster
   end
 
   def draw
+    draw_notce_line(@next_dir)
+    
     @bullets.draw
     @fighter.draw
     @enemys.draw
@@ -82,6 +87,21 @@ class GameMaster
 
   def level
     (@turn / Param.levelup_interval).to_i
+  end
+
+  def draw_notce_line(dir)
+    set_color(255, 241, 54)
+    
+    case dir
+    when 0
+      line(10, 10, 630, 10)
+    when 1
+      line(630, 10, 630, 470)
+    when 2
+      line(10, 470, 630, 470)
+    when 3
+      line(10, 10, 10, 470)
+    end
   end
 end
 
@@ -189,8 +209,7 @@ class Enemys
     @array = []
   end
 
-  def add_group
-    dir = rand(4)
+  def add_group(dir)
     0.step(Param.enemy_add_num(@game_master.level)) { add_enemy(dir) }
     @interval = Param.enemy_add_interval
     is_spawn = true
@@ -325,7 +344,7 @@ class Parameters
     @bullet_lifetime = 120
 
     # enemy
-    @enemy_add_interval = 180
+    @enemy_add_interval = 240
 
     # level parameter
     @level_parameters =
