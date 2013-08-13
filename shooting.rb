@@ -32,7 +32,7 @@ class GameMaster
     @interval = Param.enemy_add_interval
     @turn     = 0
     @score    = 0
-    @next_dir = rand(4)
+    @next_dir = @prev_dir = rand(4)
   end
 
   def update
@@ -46,8 +46,8 @@ class GameMaster
         @turn += 1
         @interval = Param.enemy_add_interval
         @enemys.add_group(@next_dir)
+        @prev_dir = @next_dir
         @next_dir = rand(4)
-        # Console.p @next_dir
       end
 
       @enemys.update
@@ -58,7 +58,8 @@ class GameMaster
   end
 
   def draw
-    draw_notce_line(@next_dir)
+    draw_notce_line(@prev_dir,   0,   0, 139)
+    draw_notce_line(@next_dir, 255, 241,  54)
     
     @bullets.draw
     @fighter.draw
@@ -89,8 +90,8 @@ class GameMaster
     (@turn / Param.levelup_interval).to_i
   end
 
-  def draw_notce_line(dir)
-    set_color(255, 241, 54)
+  def draw_notce_line(dir, r, g, b)
+    set_color(r, g, b)
     
     case dir
     when 0
