@@ -39,16 +39,19 @@ class GameMaster
   def initialize
     @fighter = Fighter.new(self, Pos.new(320, 240))
     @bullets = Bullets.new
+    @enemys  = Enemys.new
   end
 
   def update
     @fighter.update
     @bullets.update
+    @enemys.update
   end
 
   def draw
     @bullets.draw
     @fighter.draw
+    @enemys.draw
   end
 
   def add_bullet(pos)
@@ -130,6 +133,48 @@ class Bullet
 
   def dead?
     @lifetime == 0
+  end
+end
+
+class Enemys
+  def initialize
+    @array = []
+    @array << Enemy.new(Pos.new(10, 20))
+    @array << Enemy.new(Pos.new(40, 20))
+  end
+
+  def update
+    # Add random
+
+    # Update
+    @array.each {|v| v.update }
+
+    # Check dead
+    @array = @array.find_all {|v| !v.dead? }
+  end
+
+  def draw
+    @array.each {|v| v.draw }
+  end
+end
+
+class Enemy
+  def initialize(pos)
+    @pos = pos.clone
+  end
+
+  def update
+    @pos.y += 3
+  end
+
+  def draw
+    set_fill
+    set_color(196, 0, 230)
+    rect(@pos.x, @pos.y, 30, 30)
+  end
+
+  def dead?
+    false
   end
 end
 
