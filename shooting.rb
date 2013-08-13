@@ -47,8 +47,8 @@ class GameMaster
   end
 
   def draw
-    @fighter.draw
     @bullets.draw
+    @fighter.draw
   end
 
   def add_bullet(pos)
