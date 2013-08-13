@@ -5,19 +5,16 @@ def setup
   set_background(200, 200, 200)
   Console.init(Param.console_x, Param.console_y, Param.console_width, Param.console_height) if Param.debug_console
 
-  @bullets = Bullets.new
-  @fighter = Fighter.new(Pos.new(320, 240), @bullets)
+  @game_master = GameMaster.new
 end
 
 def update
-  @fighter.update
-  @bullets.update
+  @game_master.update
 end
 
 def draw
-  @fighter.draw
-  @bullets.draw
-
+  @game_master.draw
+  
   set_color(0, 0, 0)
   text(DebugInfo.fps, 10, 15)
   text(DebugInfo.window, 10, 30)
@@ -38,10 +35,31 @@ class Pos < Struct.new(:x, :y)
   end
 end
 
+class GameMaster
+  def initialize
+    @fighter = Fighter.new(self, Pos.new(320, 240))
+    @bullets = Bullets.new
+  end
+
+  def update
+    @fighter.update
+    @bullets.update
+  end
+
+  def draw
+    @fighter.draw
+    @bullets.draw
+  end
+
+  def add_bullet(pos)
+    @bullets.add(pos)
+  end
+end
+
 class Fighter
-  def initialize(pos, bullets)
+  def initialize(game_master, pos)
+    @game_master = game_master
     @pos = pos
-    @bullets = bullets
   end
 
   def update
@@ -52,7 +70,7 @@ class Fighter
 
     # shot
     if Input.mouse_press?(0)
-      @bullets.add(@pos)
+      @game_master.add_bullet(@pos)
       # Console.p @pos
     end
   end
@@ -124,7 +142,7 @@ class Parameters
 
   def initialize
     # basic
-    @debug_console  = false                     # Display console window?
+    @debug_console  = true                     # Display console window?
     @game_width     = 640
     @game_height    = 480
     @console_height = @debug_console ? 200 : 0
