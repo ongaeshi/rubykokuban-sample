@@ -5,11 +5,11 @@ end
 
 def update
   if Input.mouse_down?(0)
-    @lines << Circle.new(Input.mouse_x, Input.mouse_y, 15, Color.new(0, 0, 0))
+    @lines << Circle.new(Input.mouse_x, Input.mouse_y, 15, MyColor.new(0, 0, 0))
   end
 
   if Input.mouse_down?(2)
-    @backgrounds << Circle.new(Input.mouse_x, Input.mouse_y, 30, Color.new(255, 255, 255))
+    @backgrounds << Circle.new(Input.mouse_x, Input.mouse_y, 30, MyColor.new(255, 255, 255))
   end
 end
 
@@ -49,7 +49,7 @@ class Circle
   end
 end
 
-class Color
+class MyColor
   def initialize(r, g, b)
     @r = r
     @g = g

@@ -11,7 +11,7 @@ def update
   if Input.mouse_down?(0)
     (1..ADD_SPEED).each do
       offset = Y_OFFSET + CIRCLE_RADIUS
-      @shapes << Circle.new(Pos.new(rand(window_width), rand(window_height - offset) + offset), Color.rand)
+      @shapes << Circle.new(Pos.new(rand(window_width), rand(window_height - offset) + offset), MyColor.rand)
     end
   end
 
@@ -45,9 +45,9 @@ end
 class Pos < Struct.new(:x, :y)
 end
 
-class Color < Struct.new(:r, :g, :b)
+class MyColor < Struct.new(:r, :g, :b)
   def self.rand
-    Color.new(Kernel.rand(255), Kernel.rand(255), Kernel.rand(255))
+    MyColor.new(Kernel.rand(255), Kernel.rand(255), Kernel.rand(255))
   end
 end
 
