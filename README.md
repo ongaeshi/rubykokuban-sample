@@ -21,6 +21,11 @@ Draw a picture. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/mast
 
 ![drawing.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/drawing.png)
 
+## image.rb
+Display 'sample.png'. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/image.rb)
+
+![image.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/image.png)
+
 ## mouse_shooting.rb
 Move mouse. Shot left click. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/mouse_shooting.rb)
 
