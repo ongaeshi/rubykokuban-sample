@@ -37,24 +37,18 @@ end
 
 # ----------------------------------------------------------
 
-def binarization(image_org)
-  image = image_org.clone
-  image.each_pixels do |x, y|
-    image.set_color(x, y, (image.color(x, y).lightness > 128) ? Color::White : Color::Black)
+def binarization(image)
+  image.map_pixels do |x, y|
+    image.color(x, y).lightness > 200 ? Color::White : Color::Black
   end
-  image.update
-  image
 end
 
-def gray(image_org)
-  image = image_org.clone
-  image.each_pixels do |x, y|
+def gray(image)
+  image.map_pixels do |x, y|
     c = image.color(x, y)
     b = c.brightness
-    image.set_color(x, y, Color.new(b, b, b, c.a))
+    Color.new(b, b, b, c.a)
   end
-  image.update
-  image
 end
 
 def draw_mosaic(image, x, y, width, height)
