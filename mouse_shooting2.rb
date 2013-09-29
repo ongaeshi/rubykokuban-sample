@@ -5,6 +5,7 @@ def setup
   set_background(200, 200, 200)
   Console.init(Param.console_x, Param.console_y, Param.console_width, Param.console_height) if Param.debug_console
 
+  $image = Image.load("mouse_shooting_tile.png")
   @game_master = GameMaster.new
   @bg = Image.load("mouse_shooting_bg.jpg")
 end
@@ -26,6 +27,7 @@ end
 # ----------------------------------------------------------
 class GameMaster
   attr_reader :enemys
+  attr_reader :image
   
   def initialize
     @fighter  = Fighter.new(self, Vec2.new(320, 240))
@@ -138,17 +140,8 @@ class Fighter
   end
 
   def draw
-    # Fighter#draw
-    set_fill
-
-    set_color(220, 73, 0)
-    triangle(@pos.x - 7, @pos.y, @pos.x + 7, @pos.y, @pos.x, @pos.y - 30)
-
-    set_color(87, 25, 122)
-    triangle(@pos.x - 14, @pos.y + 7, @pos.x - 2, @pos.y + 7, @pos.x - 7, @pos.y - 7)
-
-    set_color(87, 25, 122)
-    triangle(@pos.x + 14, @pos.y + 7, @pos.x + 2, @pos.y + 7, @pos.x + 7, @pos.y - 7)
+    set_color(Color::White)
+    $image.draw_sub(@pos.x - 15, @pos.y - 30, 30, 30, 30, 0)
   end
 end
 
@@ -190,9 +183,8 @@ class Bullet
   end
 
   def draw
-    set_fill
-    set_color(51, 106, 21)
-    circle(@pos.x, @pos.y, 5)
+    set_color(Color::White)
+    $image.draw_sub(@pos.x - 5, @pos.y - 5, 10, 10, 60, 0)
   end
 
   def dead?
@@ -286,9 +278,8 @@ class Enemy
   end
 
   def draw
-    set_fill
-    set_color(196, 0, 230)
-    rect(@pos.x - 15, @pos.y - 15, 30, 30)
+    set_color(Color::White)
+    $image.draw_sub(@pos.x - 15, @pos.y - 15, 30, 30, 0, 0)
   end
 
   def dead?
