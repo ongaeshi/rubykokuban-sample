@@ -12,6 +12,9 @@ end
 
 def update
   @game_master.update
+
+  # @screenshotter = ScreenShotter.new(10) if Input.mouse_press?(2)
+  # @screenshotter.update if @screenshotter
 end
 
 def draw
@@ -391,6 +394,22 @@ class Parameters
 
   def enemy_add_interval(level)
     level_parameter(level)[:add_interval]
+  end
+end
+
+class ScreenShotter
+  def initialize(interval = 30)
+    @index    = 0
+    @frame    = 0
+    @interval = interval
+  end
+
+  def update
+    if @frame % @interval == 0
+      Image.grab_screen.save("screenshot#{sprintf("%03d", @index)}.png")
+      @index += 1
+    end
+    @frame += 1
   end
 end
 
