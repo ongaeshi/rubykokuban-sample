@@ -29,7 +29,12 @@ Display 'sample.png'. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blo
 ## mouse_shooting.rb
 Move mouse. Shot left click. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/mouse_shooting.rb)
 
-![move_circles.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/mouse_shooting.png)
+![mouse_shooting.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/mouse_shooting.png)
+
+## mouse_shooting2.rb
+mouse_shooting + Image. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/mouse_shooting2.rb)
+
+![mouse_shooting2.gif](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/mouse_shooting2.gif)
 
 ## move_circles.rb
 Move circles. Speed up & down. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/move_circles.rb)
