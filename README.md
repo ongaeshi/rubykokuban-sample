@@ -26,6 +26,11 @@ Display 'sample.png'. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blo
 
 ![image.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/image.png)
 
+## image_filter.rb
+Binarization, Grayscale, Mossaic. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/image_filter.rb)
+
+![image_filter.png](https://raw.github.com/ongaeshi/rubykokuban-sample/master/images/image_filter.png)
+
 ## mouse_shooting.rb
 Move mouse. Shot left click. [[src]](https://github.com/ongaeshi/rubykokuban-sample/blob/master/mouse_shooting.rb)
 
