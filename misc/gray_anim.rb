@@ -12,6 +12,9 @@ def update
   @rate += 0.003
   @rate -= 1.0 if @rate > 1.0
   @image_gray = gray(@image, @rate) if @frame % 10 == 0
+
+  # @sequence_shot = SequenceShot.new(10, 40) unless @sequence_shot
+  # @sequence_shot.update
 end
 
 def draw
