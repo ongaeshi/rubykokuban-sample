@@ -30,7 +30,6 @@ def draw
 end
 
 # ----------------------------------------------------------
-
 def gray(image, rate)
   image.map_pixels do |x, y|
     c = image.color(x, y)
